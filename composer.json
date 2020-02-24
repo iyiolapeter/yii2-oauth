@@ -1,0 +1,24 @@
+{
+    "name": "iyiolapeter/yii2-oauth",
+    "description": "Extension to manage yii2 rest api authentication & authorization",
+    "type": "library",
+    "require": {
+        "bshaffer/oauth2-server-php": "^1.10",
+        "iyiolapeter/yii2-base": "*",
+        "iyiolapeter/yii2-widgets": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Peter Smart",
+            "email": "iyiolapeter@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "pso\\yii2\\oauth\\": ""
+        }
+    }
+}
