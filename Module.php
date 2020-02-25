@@ -12,8 +12,6 @@ class Module extends BaseModule
 
     const EVENT_AUTOCOMPLETE = 'oauth_autocomplete_';
 
-    protected static $psoId = 'oauth';
-
     public $oauth = 'oauth';
 
     private $_oauth;
@@ -23,6 +21,10 @@ class Module extends BaseModule
         parent::init();
         $this->_oauth = Instance::ensure($this->oauth, OauthServerComponent::className());
         // custom initialization code goes here
+    }
+
+    public static function getPsoId(){
+        return 'oauth';
     }
 
     public function getHandlerComponent(){
