@@ -3,6 +3,7 @@
 namespace pso\yii2\oauth\models;
 
 use OAuth2\Storage\ClientCredentialsInterface;
+use pso\yii2\base\traits\PsoParamTrait;
 use pso\yii2\oauth\helpers\TimestampHelper;
 use Yii;
 use yii\behaviors\BlameableBehavior;
@@ -28,19 +29,27 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property OauthAccessToken[] $oauthAccessTokens
  * @property OauthAuthorizationCode[] $oauthAuthorizationCodes
- * @property User $authUser
- * @property User $user
+ * @property $authUser
+ * @property $user
  * @property OauthRefreshToken[] $oauthRefreshTokens
  */
 class OauthClient extends \yii\db\ActiveRecord implements ClientCredentialsInterface
 {
     use \pso\yii2\oauth\traits\ARClientCredentialTrait;
+    use PsoParamTrait;
+
+    private $_user;
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'oauth_clients';
+    }
+
+    public function init(){
+        parent::init();
+        $this->_user = SELF::coalescePsoParams(['oauth.user.class','user.class']);
     }
 
     public function behaviors()
@@ -70,8 +79,8 @@ class OauthClient extends \yii\db\ActiveRecord implements ClientCredentialsInter
             [['description', 'logo', 'client_secret'], 'string', 'max' => 255],
             [['client_id'], 'string', 'max' => 32],
             [['client_id'], 'unique'],
-            // [['auth_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['owner_id' => 'id']],
-            // [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['auth_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => $this->_user, 'targetAttribute' => ['owner_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => $this->_user, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -123,20 +132,20 @@ class OauthClient extends \yii\db\ActiveRecord implements ClientCredentialsInter
      *
      * @return \yii\db\ActiveQuery
      */
-    // public function getAuthUser()
-    // {
-    //     return $this->hasOne(User::className(), ['id' => 'auth_user_id']);
-    // }
+    public function getAuthUser()
+    {
+        return $this->hasOne($this->_user, ['id' => 'auth_user_id']);
+    }
 
     /**
      * Gets query for [[User]].
      *
      * @return \yii\db\ActiveQuery
      */
-    // public function getUser()
-    // {
-    //     return $this->hasOne(User::className(), ['id' => 'user_id']);
-    // }
+    public function getUser()
+    {
+        return $this->hasOne($this->_user, ['id' => 'user_id']);
+    }
 
     /**
      * Gets query for [[OauthRefreshTokens]].
